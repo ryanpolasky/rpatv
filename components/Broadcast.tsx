@@ -38,6 +38,8 @@ type Story = {
   media?: {
     alt: string;
     credit: string;
+    metricLabel: string;
+    metricValue: string;
     src: string;
   };
 };
@@ -50,23 +52,25 @@ type CastState = Record<CastRole, string>;
 
 const STORIES: Story[] = [
   {
-    slug: "sixth-hour",
+    slug: "shua-counter-strike",
     kicker: "Developing · Steam Desk",
-    headline: "Local man opens Counter-Strike for sixth consecutive hour",
+    headline: "Shua reaches 3,407 hours of Counter-Strike",
     summary:
-      "Repeated requests for comment were answered with “one more.” Experts now believe this statement may not describe a finite quantity.",
+      "Public Steam figures show 204,455 minutes logged. Island statisticians say this is just over 142 consecutive days if sleep is suspended.",
     anchor: "Ryan P.",
     anchorRole: "Evening anchor",
     scene: "gaming",
-    dateline: "The Discord",
-    quote: "I am getting off after this one.",
-    quoteBy: "Brennan · 4 hours ago",
-    ticker: "Brennan seen entering another Premier lobby",
+    dateline: "RyLive Steam desk",
+    quote: "204,455 minutes",
+    quoteBy: "Shua · Lifetime Counter-Strike",
+    ticker: "Shua’s Counter-Strike total passes 3,400 hours",
     speech:
-      "Our top story. Local man Brennan has opened Counter-Strike for the sixth consecutive hour. He says he is getting off after this one. Island News has been unable to determine which one.",
+      "Our top story. Shua has logged more than three thousand four hundred hours of Counter-Strike. Island statisticians describe this as one hundred forty two consecutive days, assuming sleep is suspended.",
     media: {
       alt: "Counter-Strike 2 key art showing two armed operators",
       credit: "Counter-Strike 2 · Steam",
+      metricLabel: "Lifetime logged",
+      metricValue: "3,407 h",
       src: "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
     },
   },
@@ -92,7 +96,7 @@ const STORIES: Story[] = [
     headline: "Ryan loses 4,600 RyBucks betting against himself",
     summary:
       "The position collapsed minutes after Ryan listened to the exact genre he publicly insisted he was finished with.",
-    anchor: "Chip M.",
+    anchor: "Shua",
     anchorRole: "Financial analyst",
     scene: "market",
     dateline: "RyMarket",
@@ -127,14 +131,14 @@ function StoryVisual({ story }: { story: Story }) {
         <Image
           alt={story.media.alt}
           fill
-          priority={story.slug === "sixth-hour"}
+          priority={story.slug === "shua-counter-strike"}
           sizes="(max-width: 650px) 45vw, 32vw"
           src={story.media.src}
         />
         <span className="storyPhotoShade" />
         <div className="gameClock">
-          <small>Session duration</small>
-          06:12:44
+          <small>{story.media.metricLabel}</small>
+          {story.media.metricValue}
         </div>
         <span className="storyCredit">{story.media.credit}</span>
       </div>
@@ -192,11 +196,11 @@ export function Broadcast() {
   const [castRole, setCastRole] = useState<CastRole>("ryan");
   const [cast, setCast] = useState<CastState>({
     ryan: DEFAULT_MII_CAST.ryan.data,
-    chip: DEFAULT_MII_CAST.chip.data,
+    shua: DEFAULT_MII_CAST.shua.data,
   });
   const activeStory = STORIES[activeIndex];
   const activeCastRole: CastRole =
-    activeStory.scene === "market" ? "chip" : "ryan";
+    activeStory.scene === "market" ? "shua" : "ryan";
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -214,11 +218,14 @@ export function Broadcast() {
             MII_STUDIO_DATA_PATTERN.test(stored.ryan)
               ? normalizeMiiStudioData(stored.ryan)
               : current.ryan,
-          chip:
-            typeof stored.chip === "string" &&
-            MII_STUDIO_DATA_PATTERN.test(stored.chip)
-              ? normalizeMiiStudioData(stored.chip)
-              : current.chip,
+          shua:
+            typeof stored.shua === "string" &&
+            MII_STUDIO_DATA_PATTERN.test(stored.shua)
+              ? normalizeMiiStudioData(stored.shua)
+              : typeof stored.chip === "string" &&
+                  MII_STUDIO_DATA_PATTERN.test(stored.chip)
+                ? normalizeMiiStudioData(stored.chip)
+                : current.shua,
         }));
       } catch {
         window.localStorage.removeItem(CAST_STORAGE_KEY);
@@ -548,7 +555,7 @@ export function Broadcast() {
                   type="button"
                 >
                   <span>{role === "ryan" ? "Main desk" : "Market desk"}</span>
-                  <strong>{role === "ryan" ? "Ryan P." : "Chip M."}</strong>
+                  <strong>{role === "ryan" ? "Ryan P." : "Shua"}</strong>
                 </button>
               ))}
             </div>
@@ -558,7 +565,7 @@ export function Broadcast() {
               key={castRole}
               onReset={() => resetCast(castRole)}
               onSave={(data) => saveCast(castRole, data)}
-              roleLabel={castRole === "ryan" ? "Ryan P." : "Chip M."}
+              roleLabel={castRole === "ryan" ? "Ryan P." : "Shua"}
             />
           </section>
         )}
@@ -566,7 +573,7 @@ export function Broadcast() {
 
       <footer className="pageFooter">
         <span>RPATV · The island&apos;s most trusted source</span>
-        <span>Sample data · Locally saved Mii cast</span>
+        <span>RyLive-derived demo data · Locally saved Mii cast</span>
       </footer>
     </div>
   );

@@ -1,4 +1,4 @@
-type MiiVoiceRole = "chip" | "ryan";
+type MiiVoiceRole = "ryan" | "shua";
 
 const VOICE_PREFERENCES: Record<MiiVoiceRole, string[]> = {
   ryan: [
@@ -7,7 +7,7 @@ const VOICE_PREFERENCES: Record<MiiVoiceRole, string[]> = {
     "Samantha",
     "English United States",
   ],
-  chip: [
+  shua: [
     "Microsoft David",
     "Alex",
     "Google UK English Male",
@@ -20,7 +20,7 @@ const VOICE_SETTINGS: Record<
   { pitch: number; rate: number }
 > = {
   ryan: { pitch: 1.38, rate: 1.08 },
-  chip: { pitch: 0.92, rate: 0.96 },
+  shua: { pitch: 0.92, rate: 0.96 },
 };
 
 function chooseVoice(
