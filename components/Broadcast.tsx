@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Pause,
   Play,
@@ -17,6 +18,7 @@ import {
   MII_STUDIO_DATA_PATTERN,
   normalizeMiiStudioData,
 } from "@/lib/miiStudio";
+import { speakMiiLine } from "@/lib/miiVoice";
 
 type StoryScene = "gaming" | "planet" | "market" | "weather";
 
@@ -33,6 +35,11 @@ type Story = {
   quoteBy: string;
   ticker: string;
   speech: string;
+  media?: {
+    alt: string;
+    credit: string;
+    src: string;
+  };
 };
 
 const STORY_DURATION = 10_000;
@@ -57,6 +64,11 @@ const STORIES: Story[] = [
     ticker: "Brennan seen entering another Premier lobby",
     speech:
       "Our top story. Local man Brennan has opened Counter-Strike for the sixth consecutive hour. He says he is getting off after this one. Island News has been unable to determine which one.",
+    media: {
+      alt: "Counter-Strike 2 key art showing two armed operators",
+      credit: "Counter-Strike 2 · Steam",
+      src: "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg",
+    },
   },
   {
     slug: "new-planet",
@@ -108,21 +120,28 @@ const STORIES: Story[] = [
   },
 ];
 
-function StoryVisual({ scene }: { scene: StoryScene }) {
-  if (scene === "gaming") {
+function StoryVisual({ story }: { story: Story }) {
+  if (story.media) {
     return (
-      <div className="storyVisual gamingScene">
+      <div className="storyVisual storyPhoto">
+        <Image
+          alt={story.media.alt}
+          fill
+          priority={story.slug === "sixth-hour"}
+          sizes="(max-width: 650px) 45vw, 32vw"
+          src={story.media.src}
+        />
+        <span className="storyPhotoShade" />
         <div className="gameClock">
           <small>Session duration</small>
           06:12:44
         </div>
-        <div className="gameMonitor" />
-        <div className="tinyDesk" />
+        <span className="storyCredit">{story.media.credit}</span>
       </div>
     );
   }
 
-  if (scene === "planet") {
+  if (story.scene === "planet") {
     return (
       <div className="storyVisual planetScene">
         <div className="planet" />
@@ -132,7 +151,7 @@ function StoryVisual({ scene }: { scene: StoryScene }) {
     );
   }
 
-  if (scene === "market") {
+  if (story.scene === "market") {
     return (
       <div className="storyVisual marketScene">
         <div className="marketScore">
@@ -245,14 +264,10 @@ export function Broadcast() {
       return;
     }
 
-    const line = new SpeechSynthesisUtterance(activeStory.speech);
-    line.rate = 0.92;
-    line.pitch = 1.13;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(line);
+    speakMiiLine(activeStory.speech, activeCastRole);
 
     return () => window.speechSynthesis.cancel();
-  }, [activeStory, muted, playing]);
+  }, [activeCastRole, activeStory, muted, playing]);
 
   useEffect(() => {
     const handleKeys = (event: KeyboardEvent) => {
@@ -295,14 +310,17 @@ export function Broadcast() {
   return (
     <div className="pageShell">
       <header className="siteHeader">
-        <div aria-label="RPATV" className="wordmark">
-          RPA<span>TV</span>
+        <div className="channelIdentity">
+          <div aria-label="RPATV" className="wordmark">
+            RPA<span>TV</span>
+          </div>
+          <span>Island News Channel</span>
         </div>
         <div className="channelMeta">
           <span>
             <i className="liveDot" /> On air
           </span>
-          <span>Ch. 01 · Monday evening</span>
+          <span>Monday · 7:04 PM</span>
           <button
             aria-expanded={castOpen}
             aria-controls="casting-room"
@@ -311,7 +329,7 @@ export function Broadcast() {
             type="button"
           >
             <Users aria-hidden size={15} />
-            Cast
+            Cast a Mii
           </button>
         </div>
       </header>
@@ -328,18 +346,18 @@ export function Broadcast() {
             <div className="studioFloor" />
 
             <div className="programTitle">
-              <span>RPATV</span>
-              <strong>Mii</strong>
+              <span>RPATV Channel 1</span>
+              <strong>Island</strong>
               <strong>News</strong>
-              <small>Here&apos;s what&apos;s happening on the island.</small>
+              <small>Today&apos;s happenings, carefully misunderstood.</small>
             </div>
 
             <div className="storyMonitor">
               <div className="monitorHeader">
                 <span>{activeStory.dateline}</span>
-                <span>Report</span>
+                <span>Picture report</span>
               </div>
-              <StoryVisual scene={activeStory.scene} />
+              <StoryVisual story={activeStory} />
             </div>
 
             <div className="anchorPod">
@@ -360,7 +378,7 @@ export function Broadcast() {
 
             <div className="channelBug">
               <i />
-              Live
+              Island News
             </div>
 
             <div aria-live="polite" className="broadcastCaption">
@@ -377,7 +395,7 @@ export function Broadcast() {
           </div>
 
           <div className="ticker">
-            <span className="tickerLabel">Mii wire</span>
+            <span className="tickerLabel">Latest</span>
             <div className="tickerTrack">
               {tickerItems.map((story, index) => (
                 <span key={`${story.slug}-${index}`}>{story.ticker}</span>
@@ -396,6 +414,7 @@ export function Broadcast() {
               type="button"
             >
               <SkipBack aria-hidden size={18} strokeWidth={2.6} />
+              <span>Back</span>
             </button>
             <button
               aria-label={playing ? "Pause broadcast" : "Play broadcast"}
@@ -409,6 +428,7 @@ export function Broadcast() {
               ) : (
                 <Play aria-hidden fill="currentColor" size={18} />
               )}
+              <span>{playing ? "Pause" : "Play"}</span>
             </button>
             <button
               aria-label="Next story"
@@ -418,12 +438,13 @@ export function Broadcast() {
               type="button"
             >
               <SkipForward aria-hidden size={18} strokeWidth={2.6} />
+              <span>Next</span>
             </button>
             <button
-              aria-label={muted ? "Turn narration on" : "Mute narration"}
+              aria-label={muted ? "Turn Mii voice on" : "Turn Mii voice off"}
               className="iconButton"
               onClick={() => setMuted((current) => !current)}
-              title={muted ? "Turn narration on" : "Mute narration"}
+              title={muted ? "Turn Mii voice on" : "Turn Mii voice off"}
               type="button"
             >
               {muted ? (
@@ -431,6 +452,7 @@ export function Broadcast() {
               ) : (
                 <Volume2 aria-hidden size={18} strokeWidth={2.4} />
               )}
+              <span>{muted ? "Voice on" : "Voice off"}</span>
             </button>
           </div>
 
@@ -458,7 +480,7 @@ export function Broadcast() {
 
           <div className="editionMeta">
             Edition 0001
-            <span>Demo feed · 7:04 PM</span>
+            <span>Updated 7:04 PM</span>
           </div>
         </div>
 
@@ -471,8 +493,15 @@ export function Broadcast() {
               onClick={() => selectStory(index)}
               type="button"
             >
-              <span className="storyNumber">
-                {String(index + 1).padStart(2, "0")}
+              <span
+                className={`storyThumbnail storyThumbnail-${story.scene}`}
+                style={
+                  story.media
+                    ? { backgroundImage: `url("${story.media.src}")` }
+                    : undefined
+                }
+              >
+                <span>{String(index + 1).padStart(2, "0")}</span>
               </span>
               <span className="storyInfo">
                 <span>{story.kicker.split(" · ")[0]}</span>

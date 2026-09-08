@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true,
+    remotePatterns: [
+      new URL("https://cdn.akamai.steamstatic.com/steam/apps/**"),
+    ],
   },
 };
 

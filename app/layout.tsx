@@ -1,21 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 
-const sans = Geist({
+const rounded = Nunito({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "600", "700", "800", "900"],
 });
 
 const mono = Geist_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-});
-
-const display = Fraunces({
-  variable: "--font-display",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#132a45",
+  themeColor: "#dff5fb",
 };
 
 export default function RootLayout({
@@ -35,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sans.variable} ${mono.variable} ${display.variable}`}>
+      <body className={`${rounded.variable} ${mono.variable}`}>
         <a className="skipLink" href="#main">
           Skip to broadcast
         </a>
