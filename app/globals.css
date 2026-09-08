@@ -37,7 +37,8 @@ button {
 }
 
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+input:focus-visible {
   outline: 4px solid var(--yellow);
   outline-offset: 3px;
 }
@@ -99,6 +100,34 @@ a:focus-visible {
   align-items: center;
   display: inline-flex;
   gap: 0.55rem;
+}
+
+.castButton {
+  align-items: center;
+  background: var(--broadcast-blue-dark);
+  border: 1px solid var(--broadcast-blue-dark);
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  font-weight: 800;
+  gap: 0.4rem;
+  letter-spacing: 0.08em;
+  padding: 0.48rem 0.72rem;
+  text-transform: uppercase;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.castButton:hover,
+.castButton[aria-expanded="true"] {
+  background: var(--news-red);
+  border-color: var(--news-red);
+  transform: translateY(-1px);
 }
 
 .liveDot {
@@ -967,6 +996,479 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
+.castStudio {
+  background:
+    radial-gradient(circle at 9% 4%, rgba(168, 222, 241, 0.64), transparent 24rem),
+    radial-gradient(circle at 100% 100%, rgba(134, 212, 189, 0.48), transparent 26rem),
+    var(--warm-white);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 22px 55px rgba(27, 75, 99, 0.15);
+  margin-top: 0.75rem;
+  overflow: hidden;
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.castStudioHeader {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.castStudioHeader span {
+  color: var(--news-red);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.castStudioHeader h2 {
+  color: var(--broadcast-blue-dark);
+  font-family: var(--font-display), serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  margin: 0.25rem 0 0.4rem;
+}
+
+.castStudioHeader p {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.castClose {
+  align-items: center;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--broadcast-blue-dark);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 2.5rem;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.castClose:hover {
+  background: var(--news-red);
+  border-color: var(--news-red);
+  color: white;
+}
+
+.castRoleTabs {
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 1.15rem 0 0.75rem;
+}
+
+.castRoleTabs button {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0.72rem 0.85rem;
+  text-align: left;
+  transition:
+    background 150ms ease,
+    color 150ms ease,
+    transform 150ms ease;
+}
+
+.castRoleTabs button:hover {
+  background: white;
+  transform: translateY(-1px);
+}
+
+.castRoleTabs button[aria-pressed="true"] {
+  background: var(--broadcast-blue);
+  border-color: var(--broadcast-blue);
+  color: white;
+}
+
+.castRoleTabs span,
+.castRoleTabs strong {
+  display: block;
+}
+
+.castRoleTabs span {
+  color: var(--news-red);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.18rem;
+  text-transform: uppercase;
+}
+
+.castRoleTabs button[aria-pressed="true"] span {
+  color: #cdeeff;
+}
+
+.castRoleTabs strong {
+  font-size: 0.95rem;
+}
+
+.creatorWorkspace {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: minmax(250px, 0.78fr) minmax(0, 1.35fr);
+}
+
+.creatorPreview {
+  background: var(--broadcast-blue-dark);
+  border-radius: 18px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: 520px;
+  overflow: hidden;
+  padding: 0.7rem;
+  position: relative;
+}
+
+.creatorPreviewStage {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.85), transparent 30%),
+    linear-gradient(180deg, var(--studio-sky), var(--studio-mint));
+  border-radius: 13px;
+  flex: 1;
+  min-height: 355px;
+  overflow: hidden;
+  position: relative;
+}
+
+.creatorPreviewStage .miiAnchor {
+  inset: 2% 6% -6%;
+  position: absolute;
+}
+
+.creatorSpotlight {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+  height: 15%;
+  inset: auto 13% 2%;
+  position: absolute;
+}
+
+.creatorPreviewMeta {
+  padding: 0.8rem 0.35rem 0.65rem;
+}
+
+.creatorPreviewMeta span,
+.creatorPreviewMeta small {
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.54rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.creatorPreviewMeta span {
+  color: var(--yellow);
+}
+
+.creatorPreviewMeta strong {
+  display: block;
+  font-family: var(--font-display), serif;
+  font-size: 1.8rem;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  margin: 0.15rem 0 0.35rem;
+}
+
+.creatorPreviewMeta small {
+  color: #a9c5d8;
+}
+
+.creatorRandomize {
+  align-items: center;
+  background: var(--news-red);
+  border: 0;
+  border-radius: 11px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.72rem;
+  font-weight: 800;
+  gap: 0.45rem;
+  justify-content: center;
+  padding: 0.68rem;
+}
+
+.creatorRandomize:hover {
+  background: #ff5a53;
+}
+
+.creatorEditor {
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0.75rem;
+}
+
+.creatorTabs {
+  background: #e6eff0;
+  border-radius: 12px;
+  display: grid;
+  gap: 0.25rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0.25rem;
+}
+
+.creatorTabs button {
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 0.62rem 0.35rem;
+  text-transform: uppercase;
+}
+
+.creatorTabs button:hover {
+  color: var(--broadcast-blue-dark);
+}
+
+.creatorTabs button.active {
+  background: white;
+  box-shadow: 0 3px 10px rgba(24, 48, 71, 0.1);
+  color: var(--broadcast-blue);
+}
+
+.creatorControls {
+  align-content: start;
+  display: grid;
+  gap: 0.8rem 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 255px;
+  padding: 1rem 0.35rem 0.85rem;
+}
+
+.creatorRange {
+  color: var(--ink);
+  min-width: 0;
+}
+
+.creatorRange > span {
+  align-items: center;
+  display: flex;
+  font-size: 0.72rem;
+  font-weight: 800;
+  justify-content: space-between;
+  margin-bottom: 0.48rem;
+}
+
+.creatorRange output {
+  background: #e7eef0;
+  border-radius: 999px;
+  color: var(--broadcast-blue-dark);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.57rem;
+  min-width: 2rem;
+  padding: 0.2rem 0.45rem;
+  text-align: center;
+}
+
+.creatorRange input {
+  accent-color: var(--news-red);
+  cursor: pointer;
+  width: 100%;
+}
+
+.creatorColors {
+  border: 0;
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+}
+
+.creatorColors legend {
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.creatorColors > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.colorChoice {
+  background: var(--swatch);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(24, 48, 71, 0.2);
+  cursor: pointer;
+  height: 1.7rem;
+  width: 1.7rem;
+}
+
+.colorChoice:hover {
+  transform: scale(1.08);
+}
+
+.colorChoice[aria-pressed="true"] {
+  box-shadow:
+    0 0 0 2px var(--warm-white),
+    0 0 0 4px var(--news-red);
+}
+
+.creatorToggle {
+  align-self: end;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--broadcast-blue-dark);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 800;
+  min-height: 2.4rem;
+}
+
+.creatorToggle[aria-pressed="true"] {
+  background: var(--broadcast-blue);
+  color: white;
+}
+
+.creatorGender {
+  display: grid;
+  gap: 0.4rem;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.creatorGender button {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--broadcast-blue-dark);
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.65rem;
+}
+
+.creatorGender button[aria-pressed="true"] {
+  background: var(--broadcast-blue);
+  border-color: var(--broadcast-blue);
+  color: white;
+}
+
+.creatorImport {
+  border-top: 1px solid var(--line);
+  margin-top: auto;
+  padding: 0.8rem 0.35rem 0;
+}
+
+.creatorImport label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.creatorImport > div {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.creatorImport input {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  min-width: 0;
+  padding: 0.65rem;
+}
+
+.creatorImport button {
+  background: var(--broadcast-blue-dark);
+  border: 0;
+  border-radius: 9px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 0 0.75rem;
+}
+
+.creatorImport p {
+  color: #b52f2a;
+  font-size: 0.67rem;
+  font-weight: 700;
+  margin: 0.4rem 0 0;
+}
+
+.creatorImport a {
+  align-items: center;
+  color: var(--broadcast-blue);
+  display: inline-flex;
+  font-size: 0.66rem;
+  font-weight: 800;
+  gap: 0.28rem;
+  margin-top: 0.55rem;
+}
+
+.creatorImport small {
+  color: var(--muted);
+  display: block;
+  font-size: 0.59rem;
+  margin-top: 0.25rem;
+}
+
+.creatorActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  padding: 0.85rem 0.35rem 0.15rem;
+}
+
+.creatorActions button {
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 850;
+  gap: 0.4rem;
+  justify-content: center;
+  padding: 0.68rem 0.8rem;
+}
+
+.creatorReset {
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--broadcast-blue-dark);
+}
+
+.creatorSave {
+  background: var(--news-red);
+  border: 1px solid var(--news-red);
+  color: white;
+}
+
+.creatorSave:hover {
+  background: #ff5a53;
+}
+
 .pageFooter {
   align-items: center;
   color: var(--muted);
@@ -1055,6 +1557,19 @@ a:focus-visible {
   .storyList {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .creatorWorkspace {
+    grid-template-columns: minmax(210px, 0.72fr) minmax(0, 1.28fr);
+  }
+
+  .creatorControls {
+    grid-template-columns: 1fr;
+  }
+
+  .creatorColors,
+  .creatorGender {
+    grid-column: auto;
+  }
 }
 
 @media (max-width: 650px) {
@@ -1064,6 +1579,15 @@ a:focus-visible {
 
   .channelMeta span:last-child {
     display: none;
+  }
+
+  .channelMeta {
+    gap: 0.55rem;
+  }
+
+  .castButton {
+    font-size: 0.56rem;
+    padding: 0.43rem 0.58rem;
   }
 
   .television {
@@ -1198,6 +1722,53 @@ a:focus-visible {
     text-align: left;
   }
 
+  .castStudio {
+    border-radius: 16px;
+    margin-inline: -0.15rem;
+    padding: 0.85rem;
+  }
+
+  .castStudioHeader p {
+    font-size: 0.76rem;
+  }
+
+  .creatorWorkspace {
+    grid-template-columns: 1fr;
+  }
+
+  .creatorPreview {
+    display: grid;
+    gap: 0 0.65rem;
+    grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1fr);
+    min-height: 250px;
+  }
+
+  .creatorPreviewStage {
+    grid-row: 1 / 3;
+    min-height: 235px;
+  }
+
+  .creatorPreviewMeta {
+    align-self: end;
+    padding: 0.65rem 0.2rem;
+  }
+
+  .creatorRandomize {
+    align-self: start;
+  }
+
+  .creatorControls {
+    min-height: 0;
+  }
+
+  .creatorImport > div {
+    grid-template-columns: 1fr;
+  }
+
+  .creatorImport button {
+    min-height: 2.35rem;
+  }
+
   .pageFooter {
     align-items: flex-start;
     flex-direction: column;
@@ -1218,6 +1789,10 @@ a:focus-visible {
     font-size: 0.58rem;
   }
 
+  .castButton svg {
+    display: none;
+  }
+
   .programTitle small {
     display: none;
   }
@@ -1233,6 +1808,27 @@ a:focus-visible {
 
   .editionMeta {
     font-size: 0.54rem;
+  }
+
+  .castRoleTabs {
+    grid-template-columns: 1fr;
+  }
+
+  .creatorPreview {
+    grid-template-columns: 1fr;
+  }
+
+  .creatorPreviewStage {
+    grid-row: auto;
+  }
+
+  .creatorPreviewMeta {
+    padding-bottom: 0.55rem;
+  }
+
+  .creatorActions {
+    align-items: stretch;
+    flex-direction: column-reverse;
   }
 }
 

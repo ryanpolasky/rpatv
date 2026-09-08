@@ -1,19 +1,15 @@
 "use client";
 
-type MiiVariant = "ryan" | "chip";
+import { renderMiiStudioUrl } from "@/lib/miiStudio";
 
 type MiiAnchorProps = {
+  animated?: boolean;
+  data: string;
+  label: string;
   speaking: boolean;
-  variant: MiiVariant;
 };
 
-const MII_STUDIO_DATA: Record<
-  MiiVariant,
-  {
-    data: string;
-    label: string;
-  }
-> = {
+export const DEFAULT_MII_CAST = {
   ryan: {
     data: "000f145b5f5e646e49546169687477858e878a87878e969d9c9fa6b3b9c0e5acafb6bbb6bcb6b9b8bebfc3cfd1d9da",
     label: "A Mii news anchor named Ryan",
@@ -24,42 +20,40 @@ const MII_STUDIO_DATA: Record<
   },
 };
 
-function renderUrl(data: string, expression: string) {
-  const params = new URLSearchParams({
-    bgColor: "FFFFFF00",
-    data,
-    expression,
-    instanceCount: "1",
-    type: "all_body",
-    width: "512",
-  });
-
-  return `https://studio.mii.nintendo.com/miis/image.png?${params}`;
-}
-
-export function MiiAnchor({ speaking, variant }: MiiAnchorProps) {
-  const mii = MII_STUDIO_DATA[variant];
-
+export function MiiAnchor({
+  animated = true,
+  data,
+  label,
+  speaking,
+}: MiiAnchorProps) {
   return (
     <div
-      aria-label={mii.label}
+      aria-label={label}
       className={`miiAnchor ${speaking ? "miiAnchorSpeaking" : ""}`}
       role="img"
     >
       <span
         className="miiPose miiPoseNormal"
-        style={{ backgroundImage: `url("${renderUrl(mii.data, "normal")}")` }}
-      />
-      <span
-        className="miiPose miiPoseTalking"
         style={{
-          backgroundImage: `url("${renderUrl(mii.data, "normal_open_mouth")}")`,
+          backgroundImage: `url("${renderMiiStudioUrl(data, "normal")}")`,
         }}
       />
-      <span
-        className="miiPose miiPoseBlink"
-        style={{ backgroundImage: `url("${renderUrl(mii.data, "blink")}")` }}
-      />
+      {animated && (
+        <>
+          <span
+            className="miiPose miiPoseTalking"
+            style={{
+              backgroundImage: `url("${renderMiiStudioUrl(data, "normal_open_mouth")}")`,
+            }}
+          />
+          <span
+            className="miiPose miiPoseBlink"
+            style={{
+              backgroundImage: `url("${renderMiiStudioUrl(data, "blink")}")`,
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }

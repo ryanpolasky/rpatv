@@ -6,10 +6,17 @@ import {
   Play,
   SkipBack,
   SkipForward,
+  Users,
   Volume2,
   VolumeX,
+  X,
 } from "lucide-react";
-import { MiiAnchor } from "@/components/MiiAnchor";
+import { MiiCreator } from "@/components/MiiCreator";
+import { DEFAULT_MII_CAST, MiiAnchor } from "@/components/MiiAnchor";
+import {
+  MII_STUDIO_DATA_PATTERN,
+  normalizeMiiStudioData,
+} from "@/lib/miiStudio";
 
 type StoryScene = "gaming" | "planet" | "market" | "weather";
 
@@ -29,6 +36,10 @@ type Story = {
 };
 
 const STORY_DURATION = 10_000;
+const CAST_STORAGE_KEY = "rpatv-mii-cast-v1";
+
+type CastRole = keyof typeof DEFAULT_MII_CAST;
+type CastState = Record<CastRole, string>;
 
 const STORIES: Story[] = [
   {
@@ -158,7 +169,45 @@ export function Broadcast() {
   const [playing, setPlaying] = useState(true);
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [castOpen, setCastOpen] = useState(false);
+  const [castRole, setCastRole] = useState<CastRole>("ryan");
+  const [cast, setCast] = useState<CastState>({
+    ryan: DEFAULT_MII_CAST.ryan.data,
+    chip: DEFAULT_MII_CAST.chip.data,
+  });
   const activeStory = STORIES[activeIndex];
+  const activeCastRole: CastRole =
+    activeStory.scene === "market" ? "chip" : "ryan";
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        const saved: unknown = JSON.parse(
+          window.localStorage.getItem(CAST_STORAGE_KEY) ?? "{}",
+        );
+
+        if (typeof saved !== "object" || saved === null) return;
+
+        const stored = saved as Record<string, unknown>;
+        setCast((current) => ({
+          ryan:
+            typeof stored.ryan === "string" &&
+            MII_STUDIO_DATA_PATTERN.test(stored.ryan)
+              ? normalizeMiiStudioData(stored.ryan)
+              : current.ryan,
+          chip:
+            typeof stored.chip === "string" &&
+            MII_STUDIO_DATA_PATTERN.test(stored.chip)
+              ? normalizeMiiStudioData(stored.chip)
+              : current.chip,
+        }));
+      } catch {
+        window.localStorage.removeItem(CAST_STORAGE_KEY);
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   const selectStory = useCallback((index: number) => {
     setActiveIndex((index + STORIES.length) % STORIES.length);
@@ -229,6 +278,19 @@ export function Broadcast() {
   }, [nextStory, previousStory]);
 
   const tickerItems = [...STORIES, ...STORIES];
+  const saveCast = (role: CastRole, data: string) => {
+    const nextCast = { ...cast, [role]: normalizeMiiStudioData(data) };
+    setCast(nextCast);
+    window.localStorage.setItem(CAST_STORAGE_KEY, JSON.stringify(nextCast));
+    setCastOpen(false);
+  };
+
+  const resetCast = (role: CastRole) => {
+    const nextCast = { ...cast, [role]: DEFAULT_MII_CAST[role].data };
+    setCast(nextCast);
+    window.localStorage.setItem(CAST_STORAGE_KEY, JSON.stringify(nextCast));
+    return nextCast[role];
+  };
 
   return (
     <div className="pageShell">
@@ -241,6 +303,16 @@ export function Broadcast() {
             <i className="liveDot" /> On air
           </span>
           <span>Ch. 01 · Monday evening</span>
+          <button
+            aria-expanded={castOpen}
+            aria-controls="casting-room"
+            className="castButton"
+            onClick={() => setCastOpen((current) => !current)}
+            type="button"
+          >
+            <Users aria-hidden size={15} />
+            Cast
+          </button>
         </div>
       </header>
 
@@ -272,8 +344,9 @@ export function Broadcast() {
 
             <div className="anchorPod">
               <MiiAnchor
+                data={cast[activeCastRole]}
+                label={DEFAULT_MII_CAST[activeCastRole].label}
                 speaking={playing}
-                variant={activeStory.scene === "market" ? "chip" : "ryan"}
               />
             </div>
 
@@ -414,11 +487,57 @@ export function Broadcast() {
           <blockquote>“{activeStory.quote}”</blockquote>
           <cite>{activeStory.quoteBy}</cite>
         </aside>
+
+        {castOpen && (
+          <section
+            aria-labelledby="casting-room-title"
+            className="castStudio"
+            id="casting-room"
+          >
+            <div className="castStudioHeader">
+              <div>
+                <span>RPATV personnel department</span>
+                <h2 id="casting-room-title">Casting room</h2>
+                <p>Build a real Mii, then assign them to the news desk.</p>
+              </div>
+              <button
+                aria-label="Close casting room"
+                className="castClose"
+                onClick={() => setCastOpen(false)}
+                type="button"
+              >
+                <X aria-hidden size={20} />
+              </button>
+            </div>
+
+            <div aria-label="Choose a cast slot" className="castRoleTabs">
+              {(Object.keys(DEFAULT_MII_CAST) as CastRole[]).map((role) => (
+                <button
+                  aria-pressed={castRole === role}
+                  key={role}
+                  onClick={() => setCastRole(role)}
+                  type="button"
+                >
+                  <span>{role === "ryan" ? "Main desk" : "Market desk"}</span>
+                  <strong>{role === "ryan" ? "Ryan P." : "Chip M."}</strong>
+                </button>
+              ))}
+            </div>
+
+            <MiiCreator
+              data={cast[castRole]}
+              key={castRole}
+              onReset={() => resetCast(castRole)}
+              onSave={(data) => saveCast(castRole, data)}
+              roleLabel={castRole === "ryan" ? "Ryan P." : "Chip M."}
+            />
+          </section>
+        )}
       </section>
 
       <footer className="pageFooter">
         <span>RPATV · The island&apos;s most trusted source</span>
-        <span>Sample data · Mii Studio placeholder cast</span>
+        <span>Sample data · Locally saved Mii cast</span>
       </footer>
     </div>
   );
