@@ -9,6 +9,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
+import { SlimeMii } from "@/components/SlimeMii";
 
 type StoryScene = "gaming" | "planet" | "market" | "weather";
 
@@ -26,8 +27,6 @@ type Story = {
   ticker: string;
   speech: string;
 };
-
-type IslanderName = "ryan" | "market";
 
 const STORY_DURATION = 10_000;
 
@@ -97,134 +96,6 @@ const STORIES: Story[] = [
       "A thunderstorm warning remains active across the island. Adam joined Discord muted forty seven minutes ago and has declined audible comment.",
   },
 ];
-
-const ISLANDERS: Record<
-  IslanderName,
-  {
-    label: string;
-    skin: string;
-    hair: string;
-    jacket: string;
-    shirt: string;
-    glasses?: boolean;
-    hairStyle: "swoop" | "part";
-  }
-> = {
-  ryan: {
-    label: "Ryan, Island News anchor",
-    skin: "#f0b98f",
-    hair: "#5a3526",
-    jacket: "#254e78",
-    shirt: "#fff9e8",
-    glasses: true,
-    hairStyle: "swoop",
-  },
-  market: {
-    label: "Chip, RyMarket analyst",
-    skin: "#edb184",
-    hair: "#c47d36",
-    jacket: "#39435d",
-    shirt: "#dbe8f5",
-    hairStyle: "part",
-  },
-};
-
-function Islander({
-  name,
-  speaking = false,
-}: {
-  name: IslanderName;
-  speaking?: boolean;
-}) {
-  const person = ISLANDERS[name];
-
-  return (
-    <svg
-      aria-label={person.label}
-      className={`islander ${speaking ? "islanderSpeaking" : ""}`}
-      role="img"
-      viewBox="0 0 260 330"
-    >
-      <ellipse cx="130" cy="323" fill="rgba(9,24,41,.18)" rx="78" ry="10" />
-      <path
-        d="M62 330c3-66 23-101 68-101s65 35 68 101H62Z"
-        fill={person.jacket}
-      />
-      <path d="m106 239 24 37 24-37-24-15-24 15Z" fill={person.shirt} />
-      <path d="M115 213h30v34h-30z" fill={person.skin} />
-      <ellipse cx="69" cy="146" fill={person.skin} rx="17" ry="23" />
-      <ellipse cx="191" cy="146" fill={person.skin} rx="17" ry="23" />
-      <path
-        d="M75 78c19-39 92-48 116 1 14 29 7 93-13 122-12 18-29 29-48 29-20 0-37-11-49-30-19-29-23-92-6-122Z"
-        fill={person.skin}
-      />
-      {person.hairStyle === "swoop" ? (
-        <path
-          d="M72 113c-5-40 18-75 58-78 39-4 66 24 64 64-17-22-45-34-84-27-4 19-18 32-38 41Z"
-          fill={person.hair}
-        />
-      ) : (
-        <path
-          d="M69 107c-1-38 19-72 62-73 36 0 62 24 64 62-19-16-34-24-51-28-19 11-39 19-75 39Z"
-          fill={person.hair}
-        />
-      )}
-      <path
-        d="M92 129c8-7 19-8 29-2M141 127c10-5 21-4 29 3"
-        fill="none"
-        stroke="#3a2824"
-        strokeLinecap="round"
-        strokeWidth="5"
-      />
-      <ellipse cx="108" cy="145" fill="#172131" rx="5.5" ry="8" />
-      <ellipse cx="153" cy="145" fill="#172131" rx="5.5" ry="8" />
-      <path
-        d="M131 148c-2 10-4 17-8 22 5 4 11 4 16 0"
-        fill="none"
-        stroke="#bc775f"
-        strokeLinecap="round"
-        strokeWidth="3.5"
-      />
-      <path
-        d={
-          speaking
-            ? "M111 188c12-10 27-10 39 0-8 15-30 15-39 0Z"
-            : "M113 188c12 7 24 7 35 0"
-        }
-        fill={speaking ? "#7e3940" : "none"}
-        stroke="#873e43"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="4"
-      />
-      {person.glasses && (
-        <>
-          <rect
-            fill="none"
-            height="29"
-            rx="10"
-            stroke="#172131"
-            strokeWidth="5"
-            width="39"
-            x="86"
-            y="132"
-          />
-          <rect
-            fill="none"
-            height="29"
-            rx="10"
-            stroke="#172131"
-            strokeWidth="5"
-            width="39"
-            x="137"
-            y="132"
-          />
-          <path d="M125 144h12" stroke="#172131" strokeWidth="5" />
-        </>
-      )}
-    </svg>
-  );
-}
 
 function StoryVisual({ scene }: { scene: StoryScene }) {
   if (scene === "gaming") {
@@ -374,182 +245,180 @@ export function Broadcast() {
       </header>
 
       <section
-        aria-label="Island News broadcast player"
+        aria-label="Mii News broadcast player"
         className="broadcastShell"
       >
-        <div>
-          <div className="television">
-            <div className="stage">
-              <div className="studioArc" />
-              <div className="studioStripe" />
-              <div className="studioSun" />
-              <div className="programTitle">
-                <span>RPATV presents</span>
-                <strong>Island</strong>
-                <strong>News</strong>
-              </div>
+        <div className="television">
+          <div className="stage">
+            <div className="studioHalo" />
+            <div className="studioPanel studioPanelLeft" />
+            <div className="studioPanel studioPanelRight" />
+            <div className="studioFloor" />
 
-              <div className="storyMonitor">
-                <div className="monitorHeader">
-                  <span>{activeStory.dateline}</span>
-                  <span>Live-ish</span>
-                </div>
-                <StoryVisual scene={activeStory.scene} />
-              </div>
-
-              <div className="anchorPod">
-                <Islander
-                  name={activeStory.scene === "market" ? "market" : "ryan"}
-                  speaking={playing}
-                />
-              </div>
-              <div className="newsDesk">
-                <span className="deskMark">Island News</span>
-              </div>
-
-              <div className="channelBug">
-                <i />
-                RPATV live
-              </div>
-
-              <div aria-live="polite" className="lowerThird">
-                <div className="lowerLabel">{activeStory.kicker}</div>
-                <div className="lowerBody">
-                  <div className="headlineBlock">
-                    <h1>{activeStory.headline}</h1>
-                    <p>{activeStory.summary}</p>
-                  </div>
-                  <div className="anchorLabel">
-                    <strong>{activeStory.anchor}</strong>
-                    <span>{activeStory.anchorRole}</span>
-                  </div>
-                </div>
-              </div>
+            <div className="programTitle">
+              <span>RPATV</span>
+              <strong>Mii</strong>
+              <strong>News</strong>
+              <small>Here&apos;s what&apos;s happening on the island.</small>
             </div>
 
-            <div className="ticker">
-              <span className="tickerLabel">News wire</span>
-              <div className="tickerTrack">
-                {tickerItems.map((story, index) => (
-                  <span key={`${story.slug}-${index}`}>{story.ticker}</span>
-                ))}
+            <div className="storyMonitor">
+              <div className="monitorHeader">
+                <span>{activeStory.dateline}</span>
+                <span>Report</span>
+              </div>
+              <StoryVisual scene={activeStory.scene} />
+            </div>
+
+            <div className="anchorPod">
+              <SlimeMii
+                speaking={playing}
+                variant={activeStory.scene === "market" ? "chip" : "ryan"}
+              />
+            </div>
+
+            <div className="newsDesk">
+              <div className="deskTop" />
+              <span className="deskMark">Mii News</span>
+              <i className="deskLight deskLightOne" />
+              <i className="deskLight deskLightTwo" />
+              <i className="deskLight deskLightThree" />
+            </div>
+
+            <div className="channelBug">
+              <i />
+              Live
+            </div>
+
+            <div aria-live="polite" className="broadcastCaption">
+              <div className="captionSpeaker">
+                <strong>{activeStory.anchor}</strong>
+                <span>{activeStory.anchorRole}</span>
+              </div>
+              <div className="captionCopy">
+                <span className="lowerLabel">{activeStory.kicker}</span>
+                <h1>{activeStory.headline}</h1>
+                <p>{activeStory.summary}</p>
               </div>
             </div>
           </div>
 
-          <div className="controlDeck">
-            <div aria-label="Broadcast controls" className="transport">
-              <button
-                aria-label="Previous story"
-                className="iconButton"
-                onClick={previousStory}
-                title="Previous story"
-                type="button"
-              >
-                <SkipBack aria-hidden size={17} strokeWidth={2.4} />
-              </button>
-              <button
-                aria-label={playing ? "Pause broadcast" : "Play broadcast"}
-                className="iconButton primary"
-                onClick={() => setPlaying((current) => !current)}
-                title={playing ? "Pause broadcast" : "Play broadcast"}
-                type="button"
-              >
-                {playing ? (
-                  <Pause aria-hidden fill="currentColor" size={17} />
-                ) : (
-                  <Play aria-hidden fill="currentColor" size={17} />
-                )}
-              </button>
-              <button
-                aria-label="Next story"
-                className="iconButton"
-                onClick={nextStory}
-                title="Next story"
-                type="button"
-              >
-                <SkipForward aria-hidden size={17} strokeWidth={2.4} />
-              </button>
-              <button
-                aria-label={muted ? "Turn narration on" : "Mute narration"}
-                className="iconButton"
-                onClick={() => setMuted((current) => !current)}
-                title={muted ? "Turn narration on" : "Mute narration"}
-                type="button"
-              >
-                {muted ? (
-                  <VolumeX aria-hidden size={17} strokeWidth={2.4} />
-                ) : (
-                  <Volume2 aria-hidden size={17} strokeWidth={2.4} />
-                )}
-              </button>
-            </div>
-
-            <div className="timeline">
-              <div className="timelineMeta">
-                <span>
-                  Story {activeIndex + 1} of {STORIES.length}
-                </span>
-                <span>{playing ? "Rolling" : "Held"}</span>
-              </div>
-              <div
-                aria-label={`${Math.round(progress)} percent through current story`}
-                aria-valuemax={100}
-                aria-valuemin={0}
-                aria-valuenow={Math.round(progress)}
-                className="progressRail"
-                role="progressbar"
-              >
-                <div
-                  className="progressFill"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="editionMeta">
-              Edition 0001
-              <span>Demo feed · 7:04 PM</span>
+          <div className="ticker">
+            <span className="tickerLabel">Mii wire</span>
+            <div className="tickerTrack">
+              {tickerItems.map((story, index) => (
+                <span key={`${story.slug}-${index}`}>{story.ticker}</span>
+              ))}
             </div>
           </div>
         </div>
 
-        <aside aria-label="Run of show" className="runOfShow">
-          <div className="runHeader">
-            <span className="runEyebrow">Tonight on channel one</span>
-            <h2>Run of show</h2>
+        <div className="controlDeck">
+          <div aria-label="Broadcast controls" className="transport">
+            <button
+              aria-label="Previous story"
+              className="iconButton"
+              onClick={previousStory}
+              title="Previous story"
+              type="button"
+            >
+              <SkipBack aria-hidden size={18} strokeWidth={2.6} />
+            </button>
+            <button
+              aria-label={playing ? "Pause broadcast" : "Play broadcast"}
+              className="iconButton primary"
+              onClick={() => setPlaying((current) => !current)}
+              title={playing ? "Pause broadcast" : "Play broadcast"}
+              type="button"
+            >
+              {playing ? (
+                <Pause aria-hidden fill="currentColor" size={18} />
+              ) : (
+                <Play aria-hidden fill="currentColor" size={18} />
+              )}
+            </button>
+            <button
+              aria-label="Next story"
+              className="iconButton"
+              onClick={nextStory}
+              title="Next story"
+              type="button"
+            >
+              <SkipForward aria-hidden size={18} strokeWidth={2.6} />
+            </button>
+            <button
+              aria-label={muted ? "Turn narration on" : "Mute narration"}
+              className="iconButton"
+              onClick={() => setMuted((current) => !current)}
+              title={muted ? "Turn narration on" : "Mute narration"}
+              type="button"
+            >
+              {muted ? (
+                <VolumeX aria-hidden size={18} strokeWidth={2.4} />
+              ) : (
+                <Volume2 aria-hidden size={18} strokeWidth={2.4} />
+              )}
+            </button>
           </div>
 
-          <div className="storyList">
-            {STORIES.map((story, index) => (
-              <button
-                aria-current={index === activeIndex ? "true" : undefined}
-                className={`storyButton ${index === activeIndex ? "active" : ""}`}
-                key={story.slug}
-                onClick={() => selectStory(index)}
-                type="button"
-              >
-                <span className="storyNumber">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="storyInfo">
-                  <span>{story.kicker.split(" · ")[0]}</span>
-                  <strong>{story.headline}</strong>
-                </span>
-              </button>
-            ))}
+          <div className="timeline">
+            <div className="timelineMeta">
+              <span>
+                Story {activeIndex + 1} of {STORIES.length}
+              </span>
+              <span>{playing ? "On air" : "Paused"}</span>
+            </div>
+            <div
+              aria-label={`${Math.round(progress)} percent through current story`}
+              aria-valuemax={100}
+              aria-valuemin={0}
+              aria-valuenow={Math.round(progress)}
+              className="progressRail"
+              role="progressbar"
+            >
+              <div
+                className="progressFill"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
 
-          <div className="quoteBlock">
-            <blockquote>“{activeStory.quote}”</blockquote>
-            <cite>{activeStory.quoteBy}</cite>
+          <div className="editionMeta">
+            Edition 0001
+            <span>Demo feed · 7:04 PM</span>
           </div>
+        </div>
+
+        <nav aria-label="Choose a news story" className="storyList">
+          {STORIES.map((story, index) => (
+            <button
+              aria-current={index === activeIndex ? "true" : undefined}
+              className={`storyButton ${index === activeIndex ? "active" : ""}`}
+              key={story.slug}
+              onClick={() => selectStory(index)}
+              type="button"
+            >
+              <span className="storyNumber">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span className="storyInfo">
+                <span>{story.kicker.split(" · ")[0]}</span>
+                <strong>{story.headline}</strong>
+              </span>
+            </button>
+          ))}
+        </nav>
+
+        <aside aria-label="Island reaction" className="quoteBlock">
+          <span>Island reaction</span>
+          <blockquote>“{activeStory.quote}”</blockquote>
+          <cite>{activeStory.quoteBy}</cite>
         </aside>
       </section>
 
       <footer className="pageFooter">
         <span>RPATV · The island&apos;s most trusted source</span>
-        <span>Prototype feed · Sample data · Original placeholder avatars</span>
+        <span>Sample data · Original procedural 3D avatars</span>
       </footer>
     </div>
   );
