@@ -9,7 +9,7 @@ import {
   Volume2,
   VolumeX,
 } from "lucide-react";
-import { SlimeMii } from "@/components/SlimeMii";
+import { MiiAnchor } from "@/components/MiiAnchor";
 
 type StoryScene = "gaming" | "planet" | "market" | "weather";
 
@@ -271,7 +271,7 @@ export function Broadcast() {
             </div>
 
             <div className="anchorPod">
-              <SlimeMii
+              <MiiAnchor
                 speaking={playing}
                 variant={activeStory.scene === "market" ? "chip" : "ryan"}
               />
@@ -418,7 +418,7 @@ export function Broadcast() {
 
       <footer className="pageFooter">
         <span>RPATV · The island&apos;s most trusted source</span>
-        <span>Sample data · Original procedural 3D avatars</span>
+        <span>Sample data · Mii Studio placeholder cast</span>
       </footer>
     </div>
   );
